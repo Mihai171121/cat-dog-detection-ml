@@ -70,7 +70,7 @@ def train_custom():
         device = 'cpu'
 
     # Dataset
-    project_root = Path(__file__).parent
+    project_root = Path(__file__).parent.parent  # Go up to project root
     data_yaml = project_root / "Data_set_Cat_vs_Dog" / "yolo_data" / "data.yaml"
 
     if not data_yaml.exists():
