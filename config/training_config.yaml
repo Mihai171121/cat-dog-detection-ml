@@ -1,0 +1,90 @@
+# Configurare Antrenare High Accuracy - Pisici vs Câini
+path: D:\Curs Python\ML Cats vs Dogs\Data_set_Cat_vs_Dog\yolo_data
+train: train/images
+val: val/images
+test: test/images
+
+# Clase
+nc: 2
+names: ['cat', 'dog']
+
+# ============================================================================
+# CONFIGURARE HIGH ACCURACY (Precizie Maximă)
+# ============================================================================
+
+# Model
+model: yolov8m.pt           # Medium model (mai precis decât small)
+
+# Antrenare
+epochs: 200                  # 200 epoci pentru învățare profundă
+batch_size: 8                # Batch mai mic = gradient mai stabil
+img_size: 640                # Dimensiune standard
+device: 0                    # GPU CUDA
+
+# Optimizator
+optimizer: AdamW             # AdamW (mai bun pentru accuracy)
+lr0: 0.005                   # Learning rate inițial mai mic (învățare fină)
+lrf: 0.001                   # Learning rate final foarte mic
+momentum: 0.95               # Momentum mai mare
+weight_decay: 0.001          # Regularizare mai puternică
+warmup_epochs: 5             # Warmup mai lung
+
+# Early Stopping
+patience: 100                # Mai tolerant (așteaptă 100 epoci fără îmbunătățire)
+
+# Augmentare Date (Îmbunătățită)
+hsv_h: 0.02                  # Variație hue
+hsv_s: 0.8                   # Variație saturație
+hsv_v: 0.5                   # Variație luminozitate
+degrees: 10.0                # Rotație ±10 grade
+translate: 0.15              # Translatare
+scale: 0.7                   # Scaling
+shear: 2.0                   # Shear
+perspective: 0.0001          # Perspective transform
+fliplr: 0.5                  # Flip orizontal 50%
+mosaic: 1.0                  # Mosaic augmentation
+mixup: 0.1                   # Mixup 10%
+copy_paste: 0.05             # Copy-paste 5%
+
+# Label Smoothing
+label_smoothing: 0.1         # Pentru generalizare mai bună
+
+# Performance
+workers: 8                   # Mai mulți workers
+cache: true                  # Cache imagini în RAM
+amp: true                    # Mixed precision training
+
+# Salvare
+save_period: 5               # Salvează la fiecare 5 epoci
+
+# ============================================================================
+# EXPLICAȚII:
+# ============================================================================
+#
+# EPOCI: 200
+# - Mai multe epoci = model învață mai mult
+# - Early stopping la 100 epoci fără îmbunătățire
+# - Estimare: 60-120 minute pe RTX 3060
+#
+# BATCH SIZE: 8
+# - Mai mic decât default (16) pentru gradient mai stabil
+# - Folosește ~4.5GB din 6GB VRAM
+# - Mai precis dar puțin mai lent
+#
+# MODEL: YOLOv8m (medium)
+# - Mai mare decât YOLOv8s (small)
+# - Mai precis dar puțin mai lent
+# - ~50MB vs ~22MB
+#
+# LEARNING RATE: 0.005 (mai mic)
+# - Învățare mai fină și mai precisă
+# - Evită overfitting
+# - Convergență mai stabilă
+#
+# AUGMENTARE: Îmbunătățită
+# - Rotații, shear, perspective
+# - Mixup și copy-paste pentru generalizare
+# - Ajută modelul să recunoască în diverse condiții
+#
+# ȚINTĂ: mAP50 > 0.95 (95% precizie)
+# ============================================================================
