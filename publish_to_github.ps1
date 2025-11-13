@@ -83,7 +83,7 @@ if ($LASTEXITCODE -ne 0) {
     Write-Host "`n"
 
     Write-Host "Opening token creation page..." -ForegroundColor Cyan
-    Start-Process "https://github.com/settings/tokens/new?scopes=repo&description=ML-Project-Upload"
+    Start-Process "https://github.com/settings/tokens/new?scopes=repo`&description=ML-Project-Upload"
 
     Write-Host "`nPress any key after creating the token to try again..." -ForegroundColor Yellow
     $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
