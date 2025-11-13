@@ -1,5 +1,5 @@
 """
-Script pentru configurarea mediului virtual și instalarea pachetelor
+Script for setting up the virtual environment and installing packages
 """
 
 import subprocess
@@ -9,32 +9,32 @@ from pathlib import Path
 
 
 def create_virtual_environment():
-    """Creează mediul virtual"""
+    """Create the virtual environment"""
     print("=" * 60)
-    print("CREARE MEDIU VIRTUAL")
+    print("CREATE VIRTUAL ENVIRONMENT")
     print("=" * 60)
 
     venv_path = Path(".venv1")
 
     if venv_path.exists():
-        print("⚠️ Mediul virtual există deja!")
-        response = input("Doriți să-l ștergeți și să creați unul nou? (da/nu): ")
-        if response.lower() != 'da':
+        print("⚠️ Virtual environment already exists!")
+        response = input("Do you want to delete it and create a new one? (yes/no): ")
+        if response.lower() not in ['yes', 'y', 'da']:
             return venv_path
 
         import shutil
         shutil.rmtree(venv_path)
-        print("✅ Mediu virtual vechi șters")
+        print("✅ Old virtual environment deleted")
 
-    print("\n📦 Creare mediu virtual...")
+    print("\n📦 Creating virtual environment...")
     subprocess.run([sys.executable, "-m", "venv", ".venv1"], check=True)
-    print("✅ Mediu virtual creat cu succes!")
+    print("✅ Virtual environment created successfully!")
 
     return venv_path
 
 
 def get_python_path(venv_path):
-    """Obține calea către python din mediul virtual"""
+    """Get the path to python from the virtual environment"""
     if os.name == 'nt':  # Windows
         return venv_path / "Scripts" / "python.exe"
     else:  # Linux/Mac
@@ -42,24 +42,24 @@ def get_python_path(venv_path):
 
 
 def install_packages(venv_path):
-    """Instalează pachetele din requirements.txt"""
+    """Install packages from requirements.txt"""
     print("\n" + "=" * 60)
-    print("INSTALARE PACHETE")
+    print("INSTALL PACKAGES")
     print("=" * 60)
 
     python_path = get_python_path(venv_path)
 
-    # Upgrade pip folosind python -m pip
-    print("\n📦 Actualizare pip...")
+    # Upgrade pip using python -m pip
+    print("\n📦 Updating pip...")
     try:
         subprocess.run([str(python_path), "-m", "pip", "install", "--upgrade", "pip"], check=True)
-        print("✅ Pip actualizat cu succes!")
+        print("✅ Pip updated successfully!")
     except subprocess.CalledProcessError:
-        print("⚠️ Pip nu a putut fi actualizat, dar continuăm cu instalarea...")
+        print("⚠️ Pip could not be updated, but we continue with installation...")
 
-    # Instalează PyTorch cu CUDA mai întâi
-    print("\n📦 Instalare PyTorch cu suport CUDA 11.8...")
-    print("⏳ Acest proces poate dura câteva minute (descărcare ~2.8 GB)...\n")
+    # Install PyTorch with CUDA first
+    print("\n📦 Installing PyTorch with CUDA 11.8 support...")
+    print("⏳ This process may take several minutes (downloading ~2.8 GB)...\n")
 
     subprocess.run([
         str(python_path), "-m", "pip", "install",
@@ -69,11 +69,11 @@ def install_packages(venv_path):
         "--index-url", "https://download.pytorch.org/whl/cu118"
     ], check=True)
 
-    print("\n✅ PyTorch instalat cu succes!")
+    print("\n✅ PyTorch installed successfully!")
 
-    # Instalează restul pachetelor
-    print("\n📦 Instalare pachete restante din requirements.txt...")
-    print("⏳ Instalare în curs...\n")
+    # Install remaining packages
+    print("\n📦 Installing remaining packages from requirements.txt...")
+    print("⏳ Installation in progress...\n")
 
     subprocess.run([
         str(python_path), "-m", "pip", "install",
@@ -83,18 +83,18 @@ def install_packages(venv_path):
         "notebook", "ipywidgets", "ipykernel"
     ], check=True)
 
-    print("\n✅ Toate pachetele au fost instalate cu succes!")
+    print("\n✅ All packages have been installed successfully!")
 
 
 def verify_installation(venv_path):
-    """Verifică instalarea pachetelor"""
+    """Verify package installation"""
     print("\n" + "=" * 60)
-    print("VERIFICARE INSTALARE")
+    print("VERIFY INSTALLATION")
     print("=" * 60)
 
     python_path = get_python_path(venv_path)
 
-    # Verifică PyTorch și CUDA
+    # Check PyTorch and CUDA
     check_script = """
 import torch
 import ultralytics

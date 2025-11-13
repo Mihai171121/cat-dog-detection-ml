@@ -1,5 +1,5 @@
 """
-Script rapid pentru testarea GPU și CUDA
+Quick script for testing GPU and CUDA
 """
 
 import torch
@@ -7,62 +7,62 @@ import sys
 
 
 def test_gpu():
-    """Testează disponibilitatea și funcționalitatea GPU"""
+    """Test GPU availability and functionality"""
     print("=" * 70)
-    print(" " * 20 + "TEST GPU și CUDA")
+    print(" " * 20 + "GPU AND CUDA TEST")
     print("=" * 70)
 
-    # Informații PyTorch
-    print(f"\n📦 PyTorch versiune: {torch.__version__}")
+    # PyTorch information
+    print(f"\n📦 PyTorch version: {torch.__version__}")
 
-    # Test CUDA
-    print(f"\n🔧 CUDA disponibil: {torch.cuda.is_available()}")
+    # CUDA test
+    print(f"\n🔧 CUDA available: {torch.cuda.is_available()}")
 
     if torch.cuda.is_available():
-        print(f"✅ CUDA funcțional!")
-        print(f"\n📊 Detalii GPU:")
-        print(f"   • CUDA versiune: {torch.version.cuda}")
-        print(f"   • Număr GPU-uri: {torch.cuda.device_count()}")
+        print(f"✅ CUDA functional!")
+        print(f"\n📊 GPU Details:")
+        print(f"   • CUDA version: {torch.version.cuda}")
+        print(f"   • Number of GPUs: {torch.cuda.device_count()}")
 
         for i in range(torch.cuda.device_count()):
             print(f"\n   GPU {i}:")
-            print(f"   • Nume: {torch.cuda.get_device_name(i)}")
+            print(f"   • Name: {torch.cuda.get_device_name(i)}")
             props = torch.cuda.get_device_properties(i)
-            print(f"   • Memorie totală: {props.total_memory / 1024**3:.2f} GB")
+            print(f"   • Total memory: {props.total_memory / 1024**3:.2f} GB")
             print(f"   • Compute Capability: {props.major}.{props.minor}")
             print(f"   • Multi-processors: {props.multi_processor_count}")
 
-        # Test calcul pe GPU
-        print(f"\n🧪 Test calcul pe GPU...")
+        # GPU computation test
+        print(f"\n🧪 GPU computation test...")
         try:
             x = torch.rand(1000, 1000).cuda()
             y = torch.rand(1000, 1000).cuda()
             z = torch.matmul(x, y)
-            print(f"   ✅ Calculul pe GPU funcționează perfect!")
+            print(f"   ✅ GPU computation works perfectly!")
 
-            # Benchmark simplu
+            # Simple benchmark
             import time
             start = time.time()
             for _ in range(100):
                 z = torch.matmul(x, y)
             torch.cuda.synchronize()
             gpu_time = time.time() - start
-            print(f"   ⚡ Timp pentru 100 înmulțiri matriciale: {gpu_time:.4f}s")
+            print(f"   ⚡ Time for 100 matrix multiplications: {gpu_time:.4f}s")
 
         except Exception as e:
-            print(f"   ❌ Eroare la calculul pe GPU: {e}")
+            print(f"   ❌ Error in GPU computation: {e}")
 
         print("\n" + "=" * 70)
-        print("🎉 GPU-ul NVIDIA RTX 3060 este gata pentru antrenare!")
+        print("🎉 NVIDIA RTX 3060 GPU is ready for training!")
         print("=" * 70)
 
     else:
-        print(f"❌ CUDA NU este disponibil!")
-        print(f"\n⚠️ Posibile cauze:")
-        print(f"   1. Driverele NVIDIA nu sunt instalate")
-        print(f"   2. PyTorch nu este instalat cu suport CUDA")
-        print(f"   3. GPU-ul nu este activat în sistem")
-        print(f"\n💡 Soluție: Instalați PyTorch cu CUDA:")
+        print(f"❌ CUDA is NOT available!")
+        print(f"\n⚠️ Possible causes:")
+        print(f"   1. NVIDIA drivers are not installed")
+        print(f"   2. PyTorch is not installed with CUDA support")
+        print(f"   3. GPU is not enabled in the system")
+        print(f"\n💡 Solution: Install PyTorch with CUDA:")
         print(f"   pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118")
 
 

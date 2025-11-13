@@ -1,6 +1,6 @@
 """
-Script de antrenare NON-INTERACTIV pentru Google Colab
-Rulează cu setări default optime pentru YOLOv8 Medium
+NON-INTERACTIVE Training Script for Google Colab
+Runs with optimal default settings for YOLOv8 Medium
 """
 
 import os
@@ -17,19 +17,19 @@ os.environ.setdefault("OMP_NUM_THREADS", "1")
 
 
 def train_colab_default():
-    """Antrenează cu parametri default optimi pentru Colab"""
+    """Train with optimal default parameters for Colab"""
 
     print("\n" + "=" * 70)
-    print("🎯 ANTRENARE AUTOMATĂ - PISICI VS CÂINI (COLAB)")
+    print("🎯 AUTOMATIC TRAINING - CATS VS DOGS (COLAB)")
     print("=" * 70)
 
-    # Verifică GPU
+    # Check GPU
     if torch.cuda.is_available():
         print(f"\n✅ GPU: {torch.cuda.get_device_name(0)}")
         print(f"✅ VRAM: {torch.cuda.get_device_properties(0).total_memory / 1024**3:.2f} GB")
         device = 0
     else:
-        print("\n⚠️ GPU nu este disponibil! Folosim CPU (MULT mai lent)")
+        print("\n⚠️ GPU not available! Using CPU (MUCH slower)")
         device = 'cpu'
 
     # Dataset
@@ -37,12 +37,12 @@ def train_colab_default():
     data_yaml = project_root / "Data_set_Cat_vs_Dog" / "yolo_data" / "data.yaml"
 
     if not data_yaml.exists():
-        print(f"\n❌ Eroare: Dataset nu găsit la: {data_yaml}")
+        print(f"\n❌ Error: Dataset not found at: {data_yaml}")
         return
 
     print(f"\n✅ Dataset: {data_yaml}")
 
-    # CONFIGURAȚIE DEFAULT OPTIMĂ PENTRU COLAB
+    # OPTIMAL DEFAULT CONFIGURATION FOR COLAB
     model_file = "yolov8m.pt"
     model_name = "medium"
     epochs = 150
@@ -50,48 +50,48 @@ def train_colab_default():
     lr0 = 0.005
     patience = 75
 
-    # Workers și cache pentru Colab (Linux)
+    # Workers and cache for Colab (Linux)
     num_workers = 4 if platform.system() != "Windows" else 0
-    cache_mode = True  # RAM cache pe Colab
+    cache_mode = True  # RAM cache on Colab
 
     print("\n" + "=" * 70)
-    print("📋 CONFIGURAȚIE AUTOMATĂ")
+    print("📋 AUTOMATIC CONFIGURATION")
     print("=" * 70)
     print(f"  Model:       YOLOv8-{model_name}")
-    print(f"  Epoci:       {epochs}")
+    print(f"  Epochs:      {epochs}")
     print(f"  Batch:       {batch}")
     print(f"  LR:          {lr0}")
     print(f"  Patience:    {patience}")
     print(f"  Device:      {'GPU (CUDA)' if device == 0 else 'CPU'}")
     print(f"  Workers:     {num_workers}")
     print(f"  Cache:       {cache_mode}")
-    print(f"  mAP țintă:   95-97%")
+    print(f"  Target mAP:  95-97%")
 
-    # Estimare durată
+    # Duration estimate
     est_hours = (epochs * 0.8 * (16 / batch)) / 60
-    print(f"  Durată ~:    {int(est_hours * 60)} minute ({est_hours:.1f} ore)")
+    print(f"  Duration ~:  {int(est_hours * 60)} minutes ({est_hours:.1f} hours)")
 
-    # Încarcă model
-    print(f"\n📥 Încărcare {model_file}...")
+    # Load model
+    print(f"\n📥 Loading {model_file}...")
     model = YOLO(model_file)
 
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     run_name = f'colab_{model_name}_{timestamp}'
 
     print("\n" + "=" * 70)
-    print("🚀 ÎNCEPE ANTRENAREA")
+    print("🚀 TRAINING STARTS")
     print("=" * 70)
-    print(f"\n📁 Rezultate: runs/train/{run_name}/\n")
+    print(f"\n📁 Results: runs/train/{run_name}/\n")
 
     try:
-        # ANTRENARE
+        # TRAINING
         results = model.train(
             data=str(data_yaml),
             epochs=epochs,
             imgsz=640,
             batch=batch,
             device=device,
-            # Stabilitate/performanță
+            # Stability/performance
             workers=num_workers,
             amp=True,
             cache=cache_mode,
@@ -101,7 +101,7 @@ def train_colab_default():
             exist_ok=True,
             save=True,
             save_period=max(5, epochs // 20),
-            # Optimizare
+            # Optimization
             patience=patience,
             optimizer='AdamW',
             lr0=lr0,
@@ -109,7 +109,7 @@ def train_colab_default():
             momentum=0.95,
             weight_decay=0.001,
             warmup_epochs=min(5.0, epochs * 0.05),
-            # Augmentare
+            # Augmentation
             hsv_h=0.02,
             hsv_s=0.8,
             hsv_v=0.5,
@@ -123,7 +123,7 @@ def train_colab_default():
             mixup=0.1,
             copy_paste=0.05,
             label_smoothing=0.1,
-            # Altele
+            # Others
             cos_lr=True,
             close_mosaic=min(15, epochs // 10),
             deterministic=True,
@@ -134,12 +134,12 @@ def train_colab_default():
         )
 
         print("\n" + "=" * 70)
-        print("✅ ANTRENARE FINALIZATĂ!")
+        print("✅ TRAINING COMPLETED!")
         print("=" * 70)
 
         model_path = f'runs/train/{run_name}'
 
-        # Copiere model
+        # Copy model
         import shutil
         trained_dir = project_root / "models" / "trained"
         trained_dir.mkdir(parents=True, exist_ok=True)
@@ -149,10 +149,10 @@ def train_colab_default():
 
         if best_src.exists():
             shutil.copy2(best_src, best_dst)
-            print(f"\n📁 Model salvat: {best_dst}")
+            print(f"\n📁 Model saved: {best_dst}")
 
-        # Validare test
-        print("\n🔍 Validare pe test set...")
+        # Test validation
+        print("\n🔍 Validation on test set...")
         best_model = YOLO(str(best_src))
         test_results = best_model.val(data=str(data_yaml), split='test', device=device)
 
@@ -163,19 +163,19 @@ def train_colab_default():
         recall = metrics.get('metrics/recall(B)', 0)
 
         print("\n" + "=" * 70)
-        print("📊 REZULTATE FINALE")
+        print("📊 FINAL RESULTS")
         print("=" * 70)
-        print(f"\n  mAP50:     {mAP50:.4f} {'🎯 EXCELENT!' if mAP50 > 0.95 else '✅ Bun!' if mAP50 > 0.90 else '👍 OK'}")
+        print(f"\n  mAP50:     {mAP50:.4f} {'🎯 EXCELLENT!' if mAP50 > 0.95 else '✅ Good!' if mAP50 > 0.90 else '👍 OK'}")
         print(f"  mAP50-95:  {mAP50_95:.4f}")
         print(f"  Precision: {precision:.4f}")
         print(f"  Recall:    {recall:.4f}")
 
         print("\n" + "=" * 70)
-        print("🎉 SUCCES!")
+        print("🎉 SUCCESS!")
         print("=" * 70)
-        print(f"\n💡 Folosește modelul:")
+        print(f"\n💡 Use the model:")
         print(f"   model = YOLO('{best_dst}')")
-        print(f"   results = model.predict('imagine.jpg')\n")
+        print(f"   results = model.predict('image.jpg')\n")
 
         return str(best_dst)
 

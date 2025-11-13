@@ -1,7 +1,7 @@
 """
-Training Results Viewer - Vizualizare Grafice și Rezultate Antrenare
+Training Results Viewer - View Training Graphs and Results
 
-Acest script afișează toate graficele și rezultatele antrenării într-o interfață grafică.
+This script displays all training graphs and results in a graphical interface.
 """
 
 import tkinter as tk

@@ -1,5 +1,5 @@
 """
-Script de antrenare CONFIGURABIL - TU ALEGI PARAMETRII!
+CONFIGURABLE Training Script - YOU CHOOSE THE PARAMETERS!
 RTX 3060 (6GB VRAM) - High Accuracy
 """
 
@@ -53,20 +53,20 @@ def _is_oom_error(e: Exception) -> bool:
 
 
 def train_custom():
-    """Antrenează cu parametri alesi de tine interactiv"""
+    """Train with parameters you choose interactively"""
 
     print("\n" + "=" * 70)
-    print("🎯 ANTRENARE CONFIGURABILĂ - PISICI VS CÂINI")
-    print("Alege tu parametrii pentru antrenare!")
+    print("🎯 CONFIGURABLE TRAINING - CATS VS DOGS")
+    print("Choose your training parameters!")
     print("=" * 70)
 
-    # Verifică GPU
+    # Check GPU
     if torch.cuda.is_available():
         print(f"\n✅ GPU: {torch.cuda.get_device_name(0)}")
         print(f"✅ VRAM: {torch.cuda.get_device_properties(0).total_memory / 1024**3:.2f} GB")
         device = 0
     else:
-        print("\n⚠️ GPU nu este disponibil! Folosim CPU (MULT mai lent)")
+        print("\n⚠️ GPU not available! Using CPU (MUCH slower)")
         device = 'cpu'
 
     # Dataset
@@ -74,28 +74,28 @@ def train_custom():
     data_yaml = project_root / "Data_set_Cat_vs_Dog" / "yolo_data" / "data.yaml"
 
     if not data_yaml.exists():
-        print(f"\n❌ Eroare: Dataset nu găsit la: {data_yaml}")
+        print(f"\n❌ Error: Dataset not found at: {data_yaml}")
         return
 
     print(f"\n✅ Dataset: {data_yaml}")
 
     # ========================================================================
-    # CONFIGURARE INTERACTIVĂ - ALEGI TU!
+    # INTERACTIVE CONFIGURATION - YOU CHOOSE!
     # ========================================================================
 
     print("\n" + "=" * 70)
-    print("⚙️  CONFIGURARE PARAMETRI")
+    print("⚙️  PARAMETER CONFIGURATION")
     print("=" * 70)
 
-    # 1. Selectează modelul
-    print("\n📦 ALEGE MODELUL YOLOv8:")
-    print("  1. YOLOv8n (nano)   - ~6MB,  rapid,      mAP ~85%")
-    print("  2. YOLOv8s (small)  - ~22MB, echilibru,  mAP ~90%")
-    print("  3. YOLOv8m (medium) - ~50MB, precis,     mAP ~95% ⭐ RECOMANDAT")
-    print("  4. YOLOv8l (large)  - ~87MB, foarte precis, mAP ~96%")
-    print("  5. YOLOv8x (xlarge) - ~136MB, maxim,     mAP ~97% (necesită >6GB)")
+    # 1. Select model
+    print("\n📦 CHOOSE YOLOv8 MODEL:")
+    print("  1. YOLOv8n (nano)   - ~6MB,  fast,       mAP ~85%")
+    print("  2. YOLOv8s (small)  - ~22MB, balanced,   mAP ~90%")
+    print("  3. YOLOv8m (medium) - ~50MB, accurate,   mAP ~95% ⭐ RECOMMENDED")
+    print("  4. YOLOv8l (large)  - ~87MB, very accurate, mAP ~96%")
+    print("  5. YOLOv8x (xlarge) - ~136MB, maximum,   mAP ~97% (requires >6GB)")
 
-    model_choice = input("\nSelectează modelul (1-5, Enter=3): ").strip() or "3"
+    model_choice = input("\nSelect model (1-5, Enter=3): ").strip() or "3"
 
     model_map = {
         "1": ("yolov8n.pt", "nano", "85-88%", 16),
@@ -109,51 +109,51 @@ def train_custom():
 
     pretrained_model = project_root / "models" / "pretrained" / model_file
     if not pretrained_model.exists():
-        print(f"\n📥 Descărcare {model_file}...")
+        print(f"\n📥 Downloading {model_file}...")
         pretrained_model = model_file
     else:
         pretrained_model = str(pretrained_model)
 
-    print(f"✅ Model: YOLOv8-{model_name} (mAP așteptat: {expected_map})")
+    print(f"✅ Model: YOLOv8-{model_name} (expected mAP: {expected_map})")
 
-    # 2. Selectează EPOCILE
+    # 2. Select EPOCHS
     print("\n" + "-" * 70)
-    print("📊 ALEGE NUMĂRUL DE EPOCI:")
-    print("  Recomandări:")
-    print("  • 50-100:   Test rapid      (20-60 min)")
+    print("📊 CHOOSE NUMBER OF EPOCHS:")
+    print("  Recommendations:")
+    print("  • 50-100:   Quick test      (20-60 min)")
     print("  • 100-150:  Standard        (60-90 min)")
-    print("  • 150-200:  High Accuracy   (90-120 min) ⭐ RECOMANDAT")
-    print("  • 200-300:  Max Accuracy    (2-3 ore)")
+    print("  • 150-200:  High Accuracy   (90-120 min) ⭐ RECOMMENDED")
+    print("  • 200-300:  Max Accuracy    (2-3 hours)")
 
-    epochs_input = input(f"\nNumăr epoci (Enter=200): ").strip()
+    epochs_input = input(f"\nNumber of epochs (Enter=200): ").strip()
     epochs = int(epochs_input) if epochs_input.isdigit() and int(epochs_input) > 0 else 200
 
-    print(f"✅ Epoci: {epochs}")
+    print(f"✅ Epochs: {epochs}")
 
-    # 3. Selectează BATCH SIZE
+    # 3. Select BATCH SIZE
     print("\n" + "-" * 70)
-    print("📦 ALEGE BATCH SIZE:")
-    print(f"  RTX 3060 (6GB) - Recomandare pentru YOLOv8-{model_name}:")
-    print(f"  • Batch 4:  Maxim precizie  (lent, ~3GB VRAM)")
-    print(f"  • Batch 8:  High accuracy   (recomandat, ~4.5GB) ⭐")
-    print(f"  • Batch 12: Echilibru       (~5.5GB)")
-    print(f"  • Batch 16: Rapid           (~5.8GB, risc OOM)")
+    print("📦 CHOOSE BATCH SIZE:")
+    print(f"  RTX 3060 (6GB) - Recommendation for YOLOv8-{model_name}:")
+    print(f"  • Batch 4:  Maximum accuracy  (slow, ~3GB VRAM)")
+    print(f"  • Batch 8:  High accuracy     (recommended, ~4.5GB) ⭐")
+    print(f"  • Batch 12: Balanced          (~5.5GB)")
+    print(f"  • Batch 16: Fast              (~5.8GB, OOM risk)")
 
     batch_input = input(f"\nBatch size (Enter={rec_batch}): ").strip()
     batch = int(batch_input) if batch_input.isdigit() and int(batch_input) > 0 else rec_batch
 
     if batch > 16:
-        print(f"⚠️  Batch {batch} este prea mare! Risc 'Out of Memory'. Setez la 16.")
+        print(f"⚠️  Batch {batch} is too large! Risk of 'Out of Memory'. Setting to 16.")
         batch = 16
 
     print(f"✅ Batch: {batch}")
 
-    # 4. Learning Rate (opțional - pentru avansați)
+    # 4. Learning Rate (optional - for advanced users)
     print("\n" + "-" * 70)
-    print("🎓 LEARNING RATE (Enter pentru default optim):")
-    print("  • 0.005: Fin, precis      ⭐ RECOMANDAT pentru accuracy")
+    print("🎓 LEARNING RATE (Enter for optimal default):")
+    print("  • 0.005: Fine, precise    ⭐ RECOMMENDED for accuracy")
     print("  • 0.01:  Standard")
-    print("  • 0.02:  Rapid")
+    print("  • 0.02:  Fast")
 
     lr_input = input("\nLearning rate (Enter=0.005): ").strip()
     lr0 = float(lr_input) if lr_input else 0.005
@@ -162,44 +162,44 @@ def train_custom():
 
     # 5. Early Stopping
     patience = min(100, epochs // 2)
-    print(f"\n✅ Early stopping: {patience} epoci (oprire auto dacă nu progresează)")
+    print(f"\n✅ Early stopping: {patience} epochs (auto-stop if no progress)")
 
-    # Stabilitate DataLoader (Windows): muncitori puțini + cache pe disk
+    # DataLoader Stability (Windows): few workers + disk cache
     num_workers = _default_workers()
     cache_mode = _default_cache_mode()
     print("\n" + "-" * 70)
-    print("🧠 OPTIMIZARE STABILITATE (DataLoader)")
-    print(f"  • workers: {num_workers}  (Windows recomandat <=2)")
+    print("🧠 STABILITY OPTIMIZATION (DataLoader)")
+    print(f"  • workers: {num_workers}  (Windows recommended <=2)")
     print(f"  • cache:   {cache_mode}")
 
-    # REZUMAT
+    # SUMMARY
     print("\n" + "=" * 70)
-    print("📋 CONFIGURAȚIE FINALĂ")
+    print("📋 FINAL CONFIGURATION")
     print("=" * 70)
     print(f"  Model:       YOLOv8-{model_name}")
-    print(f"  Epoci:       {epochs}")
+    print(f"  Epochs:      {epochs}")
     print(f"  Batch:       {batch}")
     print(f"  LR:          {lr0}")
     print(f"  Patience:    {patience}")
     print(f"  Device:      {'GPU (CUDA)' if device == 0 else 'CPU'}")
-    print(f"  mAP țintă:   {expected_map}")
+    print(f"  Target mAP:  {expected_map}")
     print(f"  Workers:     {num_workers}")
     print(f"  Cache:       {cache_mode}")
 
-    # Estimare durată
+    # Duration estimate
     time_map = {"nano": 0.3, "small": 0.5, "medium": 0.8, "large": 1.2, "xlarge": 1.8}
     est_hours = (epochs * time_map[model_name] * (16 / batch)) / 60
-    print(f"  Durată ~:    {int(est_hours * 60)} minute ({est_hours:.1f} ore)")
+    print(f"  Duration ~:  {int(est_hours * 60)} minutes ({est_hours:.1f} hours)")
 
-    # Confirmare
+    # Confirmation
     print("\n" + "=" * 70)
-    confirm = input("🚀 Pornesc antrenarea? (da/Enter): ").strip().lower()
+    confirm = input("🚀 Start training? (yes/Enter): ").strip().lower()
     if confirm and confirm not in ['da', 'yes', 'y', 'd', '']:
-        print("❌ Antrenare anulată.")
+        print("❌ Training cancelled.")
         return
 
-    # Încarcă model
-    print(f"\n📥 Încărcare {model_file}...")
+    # Load model
+    print(f"\n📥 Loading {model_file}...")
     model = YOLO(pretrained_model)
 
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -207,10 +207,10 @@ def train_custom():
     run_dir = Path('runs/train') / run_name
 
     print("\n" + "=" * 70)
-    print("🚀 ÎNCEPE ANTRENAREA")
+    print("🚀 TRAINING STARTS")
     print("=" * 70)
-    print(f"\n📁 Rezultate: runs/train/{run_name}/")
-    print("💡 Ctrl+C pentru a opri (progresul se salvează automat)\n")
+    print(f"\n📁 Results: runs/train/{run_name}/")
+    print("💡 Ctrl+C to stop (progress is saved automatically)\n")
 
     def _train_with_settings(
         resume: bool = False,
@@ -251,7 +251,7 @@ def train_custom():
             imgsz=_imgsz,
             batch=_batch,
             device=device,
-            # Stabilitate/performanță
+            # Stability/performance
             workers=_workers,
             amp=True,
             cache=_cache,
@@ -261,7 +261,7 @@ def train_custom():
             exist_ok=True,
             save=True,
             save_period=max(5, epochs // 20),
-            # Optimizare
+            # Optimization
             patience=patience,
             optimizer='AdamW',
             lr0=lr0,
@@ -269,7 +269,7 @@ def train_custom():
             momentum=0.95,
             weight_decay=0.001,
             warmup_epochs=min(5.0, epochs * 0.05),
-            # Augmentare
+            # Augmentation
             hsv_h=aug['hsv_h'],
             hsv_s=aug['hsv_s'],
             hsv_v=aug['hsv_v'],
@@ -283,7 +283,7 @@ def train_custom():
             mixup=aug['mixup'],
             copy_paste=aug['copy_paste'],
             label_smoothing=aug['label_smoothing'],
-            # Altele
+            # Others
             cos_lr=True,
             close_mosaic=min(15, epochs // 10),
             deterministic=True,
@@ -295,16 +295,16 @@ def train_custom():
         )
 
     try:
-        # ANTRENARE
+        # TRAINING
         results = _train_with_settings()
 
         print("\n" + "=" * 70)
-        print("✅ ANTRENARE FINALIZATĂ!")
+        print("✅ TRAINING COMPLETED!")
         print("=" * 70)
 
         model_path = f'runs/train/{run_name}'
 
-        # Copiere model
+        # Copy model
         import shutil
         trained_dir = project_root / "models" / "trained"
         trained_dir.mkdir(parents=True, exist_ok=True)
@@ -314,10 +314,10 @@ def train_custom():
 
         if best_src.exists():
             shutil.copy2(best_src, best_dst)
-            print(f"\n📁 Model salvat: {best_dst}")
+            print(f"\n📁 Model saved: {best_dst}")
 
-        # Validare test
-        print("\n🔍 Validare pe test set...")
+        # Test validation
+        print("\n🔍 Validation on test set...")
         best_model = YOLO(str(best_src))
         test_results = best_model.val(data=str(data_yaml), split='test', device=device)
 
@@ -328,29 +328,29 @@ def train_custom():
         recall = metrics.get('metrics/recall(B)', 0)
 
         print("\n" + "=" * 70)
-        print("📊 REZULTATE FINALE")
+        print("📊 FINAL RESULTS")
         print("=" * 70)
-        print(f"\n  mAP50:     {mAP50:.4f} {'🎯 EXCELENT!' if mAP50 > 0.95 else '✅ Bun!' if mAP50 > 0.90 else '👍 OK'}")
+        print(f"\n  mAP50:     {mAP50:.4f} {'🎯 EXCELLENT!' if mAP50 > 0.95 else '✅ Good!' if mAP50 > 0.90 else '👍 OK'}")
         print(f"  mAP50-95:  {mAP50_95:.4f}")
         print(f"  Precision: {precision:.4f}")
         print(f"  Recall:    {recall:.4f}")
 
         print("\n" + "=" * 70)
-        print("🎉 SUCCES!")
+        print("🎉 SUCCESS!")
         print("=" * 70)
-        print(f"\n💡 Folosește modelul:")
+        print(f"\n💡 Use the model:")
         print(f"   model = YOLO('{best_dst}')")
-        print(f"   results = model.predict('imagine.jpg')\n")
+        print(f"   results = model.predict('image.jpg')\n")
 
         return str(best_dst)
 
     except KeyboardInterrupt:
-        print(f"\n\n⚠️  Antrenare oprită! Progres salvat în: runs/train/{run_name}/")
+        print(f"\n\n⚠️  Training stopped! Progress saved in: runs/train/{run_name}/")
     except cv2.error as e:
         # Auto-recovery for OpenCV RAM OOM in DataLoader workers
-        print(f"\n❌ Eroare OpenCV: {e}")
+        print(f"\n❌ OpenCV error: {e}")
         if _is_oom_error(e):
-            print("\n🔁 Încerc reluarea cu setări mai sigure: workers=0, cache='disk', batch redus, imgsz 512, augment minim...")
+            print("\n🔁 Retrying with safer settings: workers=0, cache='disk', reduced batch, imgsz 512, minimal augment...")
             try:
                 safer_batch = max(2, batch // 2)
                 aug_overrides = {
@@ -373,16 +373,16 @@ def train_custom():
                     override_imgsz=512,
                     aug_overrides=aug_overrides,
                 )
-                print("\n✅ Reluare finalizată cu succes.")
+                print("\n✅ Recovery completed successfully.")
             except Exception as e2:
-                print(f"\n❌ Reluarea a eșuat: {e2}")
+                print(f"\n❌ Recovery failed: {e2}")
         else:
             raise
     except Exception as e:
         # Catch DataLoader worker OOM surfaced as RuntimeError
-        print(f"\n❌ Eroare: {e}")
+        print(f"\n❌ Error: {e}")
         if _is_oom_error(e):
-            print("\n🔁 Detectat OOM/DataLoader worker error. Reiau cu setări SAFE (workers=0, cache='disk', batch redus, imgsz 512, augment minim)...")
+            print("\n🔁 Detected OOM/DataLoader worker error. Retrying with SAFE settings (workers=0, cache='disk', reduced batch, imgsz 512, minimal augment)...")
             try:
                 safer_batch = max(2, batch // 2)
                 aug_overrides = {
@@ -405,9 +405,9 @@ def train_custom():
                     override_imgsz=512,
                     aug_overrides=aug_overrides,
                 )
-                print("\n✅ Reluare finalizată cu succes.")
+                print("\n✅ Recovery completed successfully.")
             except Exception as e2:
-                print(f"\n❌ Reluarea a eșuat: {e2}")
+                print(f"\n❌ Recovery failed: {e2}")
         else:
             import traceback
             traceback.print_exc()
